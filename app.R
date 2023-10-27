@@ -46,7 +46,7 @@ ui <- grid_page(
   ),
   grid_card_text(
     area = "header",
-    content = "DistApp NDSBR",
+    content = "DistApp NDS-BR",
     alignment = "start",
     is_title = FALSE
   ),
