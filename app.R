@@ -73,8 +73,8 @@ server <- function(input, output) {
   
   show_data <- reactive({
     req(input$upload)
-    
-    input$upload$datapath |> 
+
+    input$upload$datapath |>
       st_read() |>
       st_drop_geometry() |>
       head(15)
