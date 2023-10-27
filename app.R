@@ -3,7 +3,7 @@ library(gridlayout)
 library(bslib)
 library(tidyverse)
 library(sf)
-options(shiny.maxRequestSize = 10 * 1024^2)
+options(shiny.maxRequestSize = 60 * 1024^2)
 
 ui <- grid_page(
   layout = c(
@@ -22,19 +22,23 @@ ui <- grid_page(
   grid_card(
     area = "sidebar",
     card_body(
-      "Web App para cálculo de distância entre pontos georreferenciados de dados do Estudo Naturalístico de Direção Brasileiro.",
+      "Ferramenta para cálculo de distância entre pontos georreferenciados de dados do Estudo Naturalístico de Direção Brasileiro.",
       fileInput("file_input",
-                "Selecionar arquivo: ",
+                strong("Selecionar arquivo: "),
                 accept = c("gpkg","shp"),
-                buttonLabel = "Procurar",
+                buttonLabel = HTML(paste(
+                  icon("magnifying-glass"),
+                  "Procurar"
+                )),
                 placeholder = ""),
       actionButton("button_input",
-                   label = "Calcular distância"),
+                   label = "Calcular distância",
+                   icon = icon("gears")),
       downloadButton("download_gpkg", "Baixar GPKG"),
       downloadButton("download_csv", "Baixar CSV"),
       radioButtons(
         inputId = "radio_input",
-        label = "Mostrar tabela:",
+        label = strong("Mostrar tabela:"),
         choices = list(
           "Tabela Original" = "table_upload",
           "Tabela Calculada" = "table_calc",
@@ -46,8 +50,8 @@ ui <- grid_page(
   ),
   grid_card_text(
     area = "header",
-    content = "DistApp NDS-BR",
-    alignment = "start",
+    content = "Cálculo de distância entre pontos",
+    alignment = "center",
     is_title = FALSE
   ),
   grid_card(
@@ -55,7 +59,7 @@ ui <- grid_page(
     card_body(
       tabsetPanel(
         tabPanel("Tabela", tableOutput("table_output")),
-        tabPanel("Sobre", p(lorem::ipsum()))
+        tabPanel("Sobre", p(includeMarkdown("sobre.md")))
       )
     )
   )
@@ -63,8 +67,6 @@ ui <- grid_page(
 
 
 server <- function(input, output) {
-   
-  
   
 }
 
