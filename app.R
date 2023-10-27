@@ -3,7 +3,10 @@ library(gridlayout)
 library(bslib)
 library(tidyverse)
 library(sf)
+library(knitr)
+source("R/scripts.R")
 options(shiny.maxRequestSize = 60 * 1024^2)
+
 
 ui <- grid_page(
   layout = c(
@@ -23,11 +26,11 @@ ui <- grid_page(
     area = "sidebar",
     card_body(
       "Ferramenta para cálculo de distância entre pontos georreferenciados de dados do Estudo Naturalístico de Direção Brasileiro.",
-      fileInput("file_input",
+      fileInput("upload",
                 strong("Selecionar arquivo: "),
                 accept = c("gpkg","shp"),
                 buttonLabel = HTML(paste(
-                  icon("magnifying-glass"),
+                  icon("upload"),
                   "Procurar"
                 )),
                 placeholder = ""),
@@ -40,9 +43,9 @@ ui <- grid_page(
         inputId = "radio_input",
         label = strong("Mostrar tabela:"),
         choices = list(
-          "Tabela Original" = "table_upload",
-          "Tabela Calculada" = "table_calc",
-          "CSV" = "table_csv"
+          "Tabela Original" = "table_1",
+          "Tabela Calculada" = "table_2",
+          "CSV" = "table_3"
         ),
         width = "100%"
       )
@@ -50,7 +53,7 @@ ui <- grid_page(
   ),
   grid_card_text(
     area = "header",
-    content = "Cálculo de distância entre pontos",
+    content = "Cálculo de Distância entre Pontos",
     alignment = "center",
     is_title = FALSE
   ),
@@ -67,6 +70,19 @@ ui <- grid_page(
 
 
 server <- function(input, output) {
+  
+  show_data <- reactive({
+    req(input$upload)
+    
+    input$upload$datapath |> 
+      st_read() |>
+      st_drop_geometry() |>
+      head(15)
+  })
+  
+  output$table_output <- renderTable({
+    show_data()
+  })
   
 }
 
