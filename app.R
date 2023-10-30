@@ -26,7 +26,7 @@ ui <- grid_page(
     area = "sidebar",
     card_body(
       "Ferramenta para cálculo de distância entre pontos georreferenciados de dados do Estudo Naturalístico de Direção Brasileiro.",
-      fileInput("upload",
+      fileInput("file",
                 strong("Selecionar arquivo: "),
                 accept = ".gpkg",
                 buttonLabel = HTML(paste(
@@ -66,21 +66,21 @@ ui <- grid_page(
 server <- function(input, output) {
   
   file_warning <- reactive({
-    req(input$upload)
+    req(input$file)
     shinyFeedback::feedbackDanger(
-      "upload",
-      tools::file_ext(input$upload$name) != "gpkg",
+      "file",
+      tools::file_ext(input$file$name) != "gpkg",
       "Formato inválido"
     )
   })
   
   file_read <- reactive({
-    req(input$upload)
-    return(input$upload$datapath)
+    req(input$file)
+    return(input$file$datapath)
   })
   
   calc_results <- eventReactive(input$calc, {
-    req(input$upload)
+    req(input$file)
     
     data <- file_read() |> 
       st_read() |> 
@@ -99,6 +99,15 @@ server <- function(input, output) {
   output$file_warning <- renderText(file_warning())
   
   output$table_output <- renderTable(make_table())
+  
+  output$download_gpkg <- downloadHandler(
+    filename = function() {
+      paste0("results-",Sys.Date(),".gpkg")
+    },
+    content = function(file) {
+      st_write(calc_results(), file)
+    }
+  )
   
 }
 
