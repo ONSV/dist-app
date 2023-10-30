@@ -34,22 +34,12 @@ ui <- grid_page(
                   "Procurar"
                 )),
                 placeholder = ""),
-      textOutput("filewarning"),
-      actionButton("button_input",
+      textOutput("file_warning"),
+      actionButton("calc",
                    label = "Calcular distância",
                    icon = icon("gears")),
       downloadButton("download_gpkg", "Baixar GPKG"),
-      downloadButton("download_csv", "Baixar CSV"),
-      radioButtons(
-        inputId = "radio_input",
-        label = strong("Mostrar tabela:"),
-        choices = list(
-          "Tabela Original" = "table_1",
-          "Tabela Calculada" = "table_2",
-          "CSV" = "table_3"
-        ),
-        width = "100%"
-      )
+      downloadButton("download_csv", "Baixar CSV")
     )
   ),
   grid_card_text(
@@ -62,38 +52,55 @@ ui <- grid_page(
     area = "area2",
     card_body(
       tabsetPanel(
-        tabPanel("Tabela", tableOutput("table_output")),
+        tabPanel("Tabela", 
+                 shinycssloaders::withSpinner(tableOutput("table_output"),
+                                              type = 8)),
         tabPanel("Sobre", p(includeMarkdown("sobre.md")))
       )
-    )
+    ),
+    textOutput("notif")
   )
 )
 
 
 server <- function(input, output) {
   
-  # show_data <- reactive({
-  #   req(input$upload)
-  # 
-  #   input$upload$datapath |>
-  #     st_read() |>
-  #     st_drop_geometry() |>
-  #     head(15)
-  # })
-  # 
-  # output$table_output <- renderTable({
-  #   show_data()
-  # })
-  
-  filewarning <- reactive ({
-    file <- input$upload$name
-    shinyFeedback::feedbackDanger("upload",
-                                   file_ext(file) != "gpkg",
-                                   "Arquivo não é um .gpkg")
+  file_warning <- reactive({
+    req(input$upload)
+    shinyFeedback::feedbackDanger(
+      "upload",
+      tools::file_ext(input$upload$name) != "gpkg",
+      "Formato inválido"
+    )
   })
   
+  file_read <- reactive({
+    req(input$upload)
+    return(input$upload$datapath)
+  })
   
-  output$filewarning <- renderText(filewarning())
+  calc_results <- eventReactive(input$calc, {
+    req(input$upload)
+    
+    data <- file_read() |> 
+      st_read() |> 
+      linestringer() |> 
+      calc_dist()
+    
+    return(data)
+  })
+  
+  make_table <- reactive({
+    calc_results() |> 
+      st_drop_geometry() |> 
+      head(50)
+  })
+  
+  output$file_warning <- renderText(file_warning())
+  
+  output$table_output <- renderTable(make_table())
+  
+
 }
 
 shinyApp(ui, server)
