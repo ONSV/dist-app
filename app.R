@@ -100,7 +100,6 @@ server <- function(input, output) {
   
   output$table_output <- renderTable(make_table())
   
-
 }
 
 shinyApp(ui, server)
