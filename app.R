@@ -3,12 +3,12 @@ library(gridlayout)
 library(bslib)
 library(tidyverse)
 library(sf)
-library(knitr)
 source("R/scripts.R")
-options(shiny.maxRequestSize = 60 * 1024^2)
+options(shiny.maxRequestSize = 50 * 1024^2)
 
 
 ui <- grid_page(
+  shinyFeedback::useShinyFeedback(),
   layout = c(
     "header  header",
     "sidebar area2 "
@@ -28,12 +28,13 @@ ui <- grid_page(
       "Ferramenta para cálculo de distância entre pontos georreferenciados de dados do Estudo Naturalístico de Direção Brasileiro.",
       fileInput("upload",
                 strong("Selecionar arquivo: "),
-                accept = c("gpkg","shp"),
+                accept = ".gpkg",
                 buttonLabel = HTML(paste(
                   icon("upload"),
                   "Procurar"
                 )),
                 placeholder = ""),
+      textOutput("filewarning"),
       actionButton("button_input",
                    label = "Calcular distância",
                    icon = icon("gears")),
@@ -71,19 +72,28 @@ ui <- grid_page(
 
 server <- function(input, output) {
   
-  show_data <- reactive({
-    req(input$upload)
-
-    input$upload$datapath |>
-      st_read() |>
-      st_drop_geometry() |>
-      head(15)
+  # show_data <- reactive({
+  #   req(input$upload)
+  # 
+  #   input$upload$datapath |>
+  #     st_read() |>
+  #     st_drop_geometry() |>
+  #     head(15)
+  # })
+  # 
+  # output$table_output <- renderTable({
+  #   show_data()
+  # })
+  
+  filewarning <- reactive ({
+    file <- input$upload$name
+    shinyFeedback::feedbackDanger("upload",
+                                   file_ext(file) != "gpkg",
+                                   "Arquivo não é um .gpkg")
   })
   
-  output$table_output <- renderTable({
-    show_data()
-  })
   
+  output$filewarning <- renderText(filewarning())
 }
 
 shinyApp(ui, server)
