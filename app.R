@@ -96,16 +96,30 @@ server <- function(input, output) {
       head(50)
   })
   
+  make_csv <- reactive({
+    calc_results() |> 
+      st_drop_geometry()
+  })
+  
   output$file_warning <- renderText(file_warning())
   
   output$table_output <- renderTable(make_table())
   
   output$download_gpkg <- downloadHandler(
     filename = function() {
-      paste0("results-",Sys.Date(),".gpkg")
+      paste0("resultados",Sys.Date(),".gpkg")
     },
     content = function(file) {
       st_write(calc_results(), file)
+    }
+  )
+  
+  output$download_csv <- downloadHandler(
+    filename = function() {
+      paste0("resultados",Sys.Date(),".csv")
+    },
+    content = function(file) {
+      write_csv(make_csv(), file)
     }
   )
   
