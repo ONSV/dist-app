@@ -133,7 +133,6 @@ server <- function(input, output) {
       write_csv(make_csv(), file)
     }
   )
-  
 }
 
 shinyApp(ui, server)
