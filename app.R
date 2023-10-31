@@ -3,9 +3,10 @@ library(gridlayout)
 library(bslib)
 library(tidyverse)
 library(sf)
-source("R/scripts.R")
-options(shiny.maxRequestSize = 50 * 1024^2)
 
+source("R/scripts.R")
+
+options(shiny.maxRequestSize = 50 * 1024^2)
 
 ui <- grid_page(
   shinyFeedback::useShinyFeedback(),
@@ -26,18 +27,24 @@ ui <- grid_page(
     area = "sidebar",
     card_body(
       "Ferramenta para cálculo de distância entre pontos georreferenciados de dados do Estudo Naturalístico de Direção Brasileiro.",
-      fileInput("file",
-                strong("Selecionar arquivo: "),
-                accept = ".gpkg",
-                buttonLabel = HTML(paste(
-                  icon("upload"),
-                  "Procurar"
-                )),
-                placeholder = ""),
+      fileInput(
+        "file",
+        strong("Selecionar arquivo: "),
+        accept = ".gpkg",
+        buttonLabel = HTML(
+          paste(
+            icon("upload"),
+            "Procurar"
+          )
+        ),
+        placeholder = ""
+      ),
       textOutput("file_warning"),
-      actionButton("calc",
-                   label = "Calcular distância",
-                   icon = icon("gears")),
+      actionButton(
+        "calc",
+        label = "Calcular distância",
+        icon = icon("gears")
+      ),
       downloadButton("download_gpkg", "Baixar GPKG"),
       downloadButton("download_csv", "Baixar CSV")
     )
@@ -52,9 +59,13 @@ ui <- grid_page(
     area = "area2",
     card_body(
       tabsetPanel(
-        tabPanel("Tabela", 
-                 shinycssloaders::withSpinner(tableOutput("table_output"),
-                                              type = 8)),
+        tabPanel(
+          "Tabela",
+          shinycssloaders::withSpinner(
+            tableOutput("table_output"),
+            type = 8
+          )
+        ),
         tabPanel("Sobre", p(includeMarkdown("sobre.md")))
       )
     ),
@@ -107,7 +118,7 @@ server <- function(input, output) {
   
   output$download_gpkg <- downloadHandler(
     filename = function() {
-      paste0("resultados",Sys.Date(),".gpkg")
+      paste0("resultados", Sys.Date(), ".gpkg")
     },
     content = function(file) {
       st_write(calc_results(), file)
@@ -116,7 +127,7 @@ server <- function(input, output) {
   
   output$download_csv <- downloadHandler(
     filename = function() {
-      paste0("resultados",Sys.Date(),".csv")
+      paste0("resultados", Sys.Date(), ".csv")
     },
     content = function(file) {
       write_csv(make_csv(), file)
