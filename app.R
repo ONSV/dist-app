@@ -3,6 +3,7 @@ library(gridlayout)
 library(bslib)
 library(tidyverse)
 library(sf)
+library(markdown)
 
 source("R/scripts.R")
 
