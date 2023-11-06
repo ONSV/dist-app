@@ -7,7 +7,7 @@ O botão **Calcular distância** inicia o processo de conversão de pontos para 
 
 **Baixar GPKG** e **Baixar CSV** fazem o download dos resultados do cálculo, nos formatos descritos.
 
-A tabela exibida contém as primeiras 50 linhas do arquivo. A sua exibição demonstra que o calculo ocorreu com êxito.
+A tabela exibida contém as primeiras 50 linhas do arquivo. A sua exibição demonstra que o cálculo ocorreu com êxito.
 
 #### Autoria
 O app foi desenvolvido pelo [Observatório Nacional de Segurança Viária](https://www.onsv.org.br/).
