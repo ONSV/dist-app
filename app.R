@@ -49,8 +49,7 @@ ui <- grid_page(
         icon = icon("gears")
       ),
       downloadButton("download_gpkg", "Baixar GPKG"),
-      downloadButton("download_csv", "Baixar CSV"),
-      textOutput("test_text")
+      downloadButton("download_csv", "Baixar CSV")
     )
   ),
   grid_card_text(
@@ -137,21 +136,11 @@ server <- function(input, output) {
   )
   
   observe({
-    if(req(make_table())) {
-      enable("download_gpkg")
-      enable("download_csv")
-    } else {
-      disable("download_gpkg")
-      disable("download_csv")
-    }
-  })
-  
-  observeEvent(input$file, {
-    reset("calc")
-  })
-  
-  output$test_text <- renderText({
-    input$calc
+    disable("download_gpkg")
+    disable("download_csv")
+    req(make_table())
+    enable("download_gpkg")
+    enable("download_csv")
   })
   
 }
