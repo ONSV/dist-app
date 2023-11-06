@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 library(gridlayout)
 library(bslib)
 library(tidyverse)
@@ -27,6 +28,7 @@ ui <- grid_page(
   grid_card(
     area = "sidebar",
     card_body(
+      useShinyjs(),
       "Ferramenta para cálculo de distância entre pontos georreferenciados de dados do Estudo Naturalístico de Direção Brasileiro.",
       fileInput(
         "file",
@@ -47,7 +49,8 @@ ui <- grid_page(
         icon = icon("gears")
       ),
       downloadButton("download_gpkg", "Baixar GPKG"),
-      downloadButton("download_csv", "Baixar CSV")
+      downloadButton("download_csv", "Baixar CSV"),
+      textOutput("test_text")
     )
   ),
   grid_card_text(
@@ -72,7 +75,6 @@ ui <- grid_page(
     )
   )
 )
-
 
 server <- function(input, output) {
   
@@ -118,7 +120,7 @@ server <- function(input, output) {
   
   output$download_gpkg <- downloadHandler(
     filename = function() {
-      paste0("resultados", Sys.Date(), ".gpkg")
+      paste0("resultados_", Sys.Date(), ".gpkg")
     },
     content = function(file) {
       st_write(calc_results(), file)
@@ -127,12 +129,31 @@ server <- function(input, output) {
   
   output$download_csv <- downloadHandler(
     filename = function() {
-      paste0("resultados", Sys.Date(), ".csv")
+      paste0("resultados_", Sys.Date(), ".csv")
     },
     content = function(file) {
       write_csv(make_csv(), file)
     }
   )
+  
+  observe({
+    if(req(make_table())) {
+      enable("download_gpkg")
+      enable("download_csv")
+    } else {
+      disable("download_gpkg")
+      disable("download_csv")
+    }
+  })
+  
+  observeEvent(input$file, {
+    reset("calc")
+  })
+  
+  output$test_text <- renderText({
+    input$calc
+  })
+  
 }
 
 shinyApp(ui, server)
