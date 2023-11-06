@@ -69,8 +69,7 @@ ui <- grid_page(
         ),
         tabPanel("Sobre", p(includeMarkdown("sobre.md")))
       )
-    ),
-    textOutput("notif")
+    )
   )
 )
 
