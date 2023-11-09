@@ -122,7 +122,16 @@ server <- function(input, output) {
       paste0("resultados_", Sys.Date(), ".gpkg")
     },
     content = function(file) {
-      st_write(calc_results(), file)
+      withProgress(
+        message = "Baixando...",
+        value = 0,
+        {
+          incProgress(1/10)
+          Sys.sleep(1)
+          incProgress(5/10)
+          st_write(calc_results(), file)
+        }
+      )
     }
   )
   
@@ -131,7 +140,16 @@ server <- function(input, output) {
       paste0("resultados_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      write_csv(make_csv(), file)
+      withProgress(
+        message = "Baixando...",
+        value = 0,
+        {
+          incProgress(1/10)
+          Sys.sleep(1)
+          incProgress(5/10)
+          write_csv(make_csv(), file)
+        }
+      )
     }
   )
   
