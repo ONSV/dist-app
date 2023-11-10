@@ -1,4 +1,4 @@
-#### Descrição
+### Descrição
 Essa ferramenta auxilia no cálculo da distância entre pontos, presentes na amostra do [Estudo Naturalístico de Direção Brasileiro](http://www.tecnologia.ufpr.br/portal/ceppur/estudo-naturalistico-de-direcao-brasileiro/).
 
 O botão **Procurar** permite realizar o upload de um arquivo de dados espaciais, de até 50 Mb, em formato `.gpkg` (GeoPackage) ou `.shp` (Shapefile).
@@ -9,7 +9,17 @@ O botão **Calcular distância** inicia o processo de conversão de pontos para 
 
 A tabela exibida contém as primeiras 50 linhas do arquivo. A sua exibição demonstra que o cálculo ocorreu com êxito.
 
-#### Autoria
+### Changelog
+
+#### v0.1.0
+
+- Primeira versão
+
+#### v0.2.0
+
+- Adiciona uma animação de load ao baixar os resultados (#5, #10)
+
+### Autoria
 O app foi desenvolvido pelo [Observatório Nacional de Segurança Viária](https://www.onsv.org.br/).
 
-O código-fonte pode ser conferido no [GitHub](https://github.com/ONSV/dist-app). 
+O código-fonte pode ser conferido no [GitHub](https://github.com/ONSV/dist-app).
